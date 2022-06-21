@@ -7,17 +7,17 @@ type HTTPFlow<
     Input = FlowInput,
     BodyInput = any,
     BodyOutput = any,
-> = Flow<HTTPFlowInput<Input, BodyInput>, HTTPFlowOutput<Input, BodyOutput>>;
+> = Flow<HTTPFlowInput<Input, BodyInput>, HTTPFlowOutput<Input, BodyOutput>> & { instance: AxiosInstance };
 
 const httpClient = <
     Input extends FlowInput = FlowInput,
     BodyInput extends any = any,
     BodyOutput extends any = any,
     Config extends AxiosRequestConfig = AxiosRequestConfig,
->(config: Config): HTTPFlow<Input, BodyInput, BodyOutput> & { instance: AxiosInstance } => {
+>(config: Config): HTTPFlow<Input, BodyInput, BodyOutput> => {
     const instance = axios.create(config);
 
-    const httpClientFlow: HTTPFlow<Input, BodyInput, BodyOutput> & { instance?: AxiosInstance } = (input: HTTPFlowInput<Input, BodyInput>): Promise<HTTPFlowOutput<Input, BodyOutput>> => {
+    const httpClientFlow: HTTPFlow<Input, BodyInput, BodyOutput> = (input: HTTPFlowInput<Input, BodyInput>): Promise<HTTPFlowOutput<Input, BodyOutput>> => {
         return instance.request<BodyOutput>(input.axiosConfig || config).then((response: AxiosResponse<BodyOutput>) => {
             const output = { ...input, response };
             delete output.axiosConfig;
@@ -29,7 +29,7 @@ const httpClient = <
     httpClientFlow.id = 'httpClientFlow';
     httpClientFlow.instance = instance;
 
-    return httpClientFlow as HTTPFlow<Input, BodyInput, BodyOutput> & { instance: AxiosInstance };
+    return httpClientFlow;
 };
 
 export { HTTPFlowInput, HTTPFlowOutput, HTTPFlow };
