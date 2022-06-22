@@ -12,6 +12,8 @@
   "dependencies": {
     "@flow-engine/core": "^0.2.1",
     "axios": "^0.26.1",
+    "pino": "^8.0.0",
+    "pino-std-serializers": "^6.0.0",
     "typescript": "^4.6.2"
   },
   "devDependencies": {
