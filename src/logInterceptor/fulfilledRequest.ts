@@ -14,6 +14,7 @@ const getUri = (config: InternalAxiosRequestConfig): string => {
 };
 
 interface LogContext {
+    event: string,
     url: string,
     method: string,
     body?: string,
@@ -25,6 +26,7 @@ export default (requestConfig: InternalAxiosRequestConfig): InternalAxiosRequest
     }
 
     const context: LogContext = {
+        event: 'http:request',
         url: getUri(requestConfig),
         method: requestConfig.method || 'GET',
     };
@@ -33,7 +35,7 @@ export default (requestConfig: InternalAxiosRequestConfig): InternalAxiosRequest
         context.body = JSON.stringify(requestConfig.data);
     }
 
-    requestConfig.logger.info(context, 'http:request');
+    requestConfig.logger.info(context, 'axios http request fulfilled');
 
     return requestConfig;
 };

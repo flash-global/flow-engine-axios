@@ -9,12 +9,13 @@ export default (response: AxiosResponse): AxiosResponse => {
     }
 
     const context = {
+        event: 'http:response',
         headers: JSON.stringify(response.headers),
         body: JSON.stringify(response.data),
         http_code: response.status,
     };
 
-    requestConfig.logger.info(context, 'http:response');
+    requestConfig.logger.info(context, 'axios http response fulfilled');
 
     return response;
 };

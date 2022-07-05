@@ -16,15 +16,15 @@ export default (error: AxiosError | any): Promise<AxiosError | any> => {
     const serializedError = err(error);
     delete serializedError.config;
 
-    config.logger.error(
-        {
-            error: JSON.stringify(serializedError),
-            http_code: error.response?.status || -1,
-            body: JSON.stringify(error.response?.data),
-            headers: JSON.stringify(error.response?.headers),
-        },
-        'http:response:error',
-    );
+    const logContext = {
+        event: 'http:response:error',
+        error: JSON.stringify(serializedError),
+        http_code: error.response?.status || -1,
+        body: JSON.stringify(error.response?.data),
+        headers: JSON.stringify(error.response?.headers),
+    };
+
+    config.logger.error(logContext, 'axios http response rejected');
 
     return Promise.reject(error);
 };

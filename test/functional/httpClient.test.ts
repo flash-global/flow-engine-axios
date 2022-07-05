@@ -98,10 +98,23 @@ describe('Test httpClient flow', () => {
 
         const infoLogMock = logger.info as jest.Mock;
         expect(infoLogMock.mock.calls.length).toStrictEqual(2);
-        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({ method: 'get', url: '/api/test/1' });
-        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('http:request');
-        expect(infoLogMock.mock.calls[1][0]).toStrictEqual({ body: '{"value":1}', headers: undefined, http_code: 200 });
-        expect(infoLogMock.mock.calls[1][1]).toStrictEqual('http:response');
+
+        expect(infoLogMock.mock.calls[0].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('axios http request fulfilled');
+        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({
+            event: 'http:request',
+            method: 'get',
+            url: '/api/test/1',
+        });
+
+        expect(infoLogMock.mock.calls[1].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[1][1]).toStrictEqual('axios http response fulfilled');
+        expect(infoLogMock.mock.calls[1][0]).toStrictEqual({
+            event: 'http:response',
+            body: '{"value":1}',
+            headers: undefined,
+            http_code: 200,
+        });
     });
 
     test('GET network error with global logger', async () => {
@@ -120,18 +133,25 @@ describe('Test httpClient flow', () => {
 
         const infoLogMock = logger.info as jest.Mock;
         expect(infoLogMock.mock.calls.length).toStrictEqual(1);
-        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({ method: 'get', url: '/api/test/1' });
-        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('http:request');
+        expect(infoLogMock.mock.calls[0].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('axios http request fulfilled');
+        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({
+            event: 'http:request',
+            method: 'get',
+            url: '/api/test/1',
+        });
 
         const errorLogMock = logger.error as jest.Mock;
         expect(errorLogMock.mock.calls.length).toStrictEqual(1);
+        expect(errorLogMock.mock.calls[0].length).toStrictEqual(2);
+        expect(errorLogMock.mock.calls[0][1]).toStrictEqual('axios http response rejected');
         expect(errorLogMock.mock.calls[0][0]).toMatchObject({
+            event: 'http:response:error',
             body: undefined,
             headers: undefined,
             http_code: -1,
             error: expect.stringMatching('Network Error'),
         });
-        expect(errorLogMock.mock.calls[0][1]).toStrictEqual('http:response:error');
     });
 
     test('GET request interceptor throw not AxiosError with global logger - impossible to log', async () => {
@@ -190,18 +210,22 @@ describe('Test httpClient flow', () => {
         const errorLogMock = logger.error as jest.Mock;
         expect(errorLogMock.mock.calls.length).toStrictEqual(2);
 
+        expect(errorLogMock.mock.calls[0].length).toStrictEqual(2);
+        expect(errorLogMock.mock.calls[0][1]).toStrictEqual('axios http request rejected');
         expect(errorLogMock.mock.calls[0][0]).toMatchObject({
+            event: 'http:request:error',
             error: expect.stringContaining('toto'),
         });
-        expect(errorLogMock.mock.calls[0][1]).toStrictEqual('http:request:error');
 
+        expect(errorLogMock.mock.calls[1].length).toStrictEqual(2);
+        expect(errorLogMock.mock.calls[1][1]).toStrictEqual('axios http response rejected');
         expect(errorLogMock.mock.calls[1][0]).toMatchObject({
+            event: 'http:response:error',
             body: undefined,
             headers: undefined,
             http_code: -1,
             error: expect.stringContaining('toto'),
         });
-        expect(errorLogMock.mock.calls[1][1]).toStrictEqual('http:response:error');
     });
 
     test('POST success with global logger', async () => {
@@ -220,10 +244,24 @@ describe('Test httpClient flow', () => {
 
         const infoLogMock = logger.info as jest.Mock;
         expect(infoLogMock.mock.calls.length).toStrictEqual(2);
-        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({ method: 'post', url: '/api/test', body: '{"value":2}'  });
-        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('http:request');
-        expect(infoLogMock.mock.calls[1][0]).toStrictEqual({ body: '{"value":2}', headers: undefined, http_code: 201 });
-        expect(infoLogMock.mock.calls[1][1]).toStrictEqual('http:response');
+
+        expect(infoLogMock.mock.calls[0].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('axios http request fulfilled');
+        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({
+            event: 'http:request',
+            method: 'post',
+            url: '/api/test',
+            body: '{"value":2}',
+        });
+
+        expect(infoLogMock.mock.calls[1].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[1][1]).toStrictEqual('axios http response fulfilled');
+        expect(infoLogMock.mock.calls[1][0]).toStrictEqual({
+            event: 'http:response',
+            body: '{"value":2}',
+            headers: undefined,
+            http_code: 201,
+        });
     });
 
     test('HTTP request fail - route not found with logger 2 ways', async () => {
@@ -244,18 +282,25 @@ describe('Test httpClient flow', () => {
 
             const infoLogMock = logger.info as jest.Mock;
             expect(infoLogMock.mock.calls.length).toStrictEqual(1);
-            expect(infoLogMock.mock.calls[0][0]).toStrictEqual({ method: 'get', url: '/api/not-found' });
-            expect(infoLogMock.mock.calls[0][1]).toStrictEqual('http:request');
+            expect(infoLogMock.mock.calls[0].length).toStrictEqual(2);
+            expect(infoLogMock.mock.calls[0][1]).toStrictEqual('axios http request fulfilled');
+            expect(infoLogMock.mock.calls[0][0]).toStrictEqual({
+                event: 'http:request',
+                method: 'get',
+                url: '/api/not-found',
+            });
 
             const errorLogMock = logger.error as jest.Mock;
             expect(errorLogMock.mock.calls.length).toStrictEqual(1);
+            expect(errorLogMock.mock.calls[0].length).toStrictEqual(2);
+            expect(errorLogMock.mock.calls[0][1]).toStrictEqual('axios http response rejected');
             expect(errorLogMock.mock.calls[0][0]).toMatchObject({
+                event: 'http:response:error',
                 body: undefined,
                 headers: undefined,
                 http_code: 404,
                 error: expect.stringContaining('Request failed with status code 404'),
             });
-            expect(errorLogMock.mock.calls[0][1]).toStrictEqual('http:response:error');
         }
 
         {
@@ -286,17 +331,24 @@ describe('Test httpClient flow', () => {
             const errorLogMock2 = logger2.error as jest.Mock;
 
             expect(infoLogMock2.mock.calls.length).toStrictEqual(1);
-            expect(infoLogMock2.mock.calls[0][0]).toStrictEqual({ method: 'get', url: '/api/not-found' });
-            expect(infoLogMock2.mock.calls[0][1]).toStrictEqual('http:request');
+            expect(infoLogMock2.mock.calls[0].length).toStrictEqual(2);
+            expect(infoLogMock2.mock.calls[0][1]).toStrictEqual('axios http request fulfilled');
+            expect(infoLogMock2.mock.calls[0][0]).toStrictEqual({
+                event: 'http:request',
+                method: 'get',
+                url: '/api/not-found',
+            });
 
             expect(errorLogMock2.mock.calls.length).toStrictEqual(1);
+            expect(errorLogMock2.mock.calls[0].length).toStrictEqual(2);
+            expect(errorLogMock2.mock.calls[0][1]).toStrictEqual('axios http response rejected');
             expect(errorLogMock2.mock.calls[0][0]).toMatchObject({
+                event: 'http:response:error',
                 body: undefined,
                 headers: undefined,
                 http_code: 404,
                 error: expect.stringContaining('Request failed with status code 404'),
             });
-            expect(errorLogMock2.mock.calls[0][1]).toStrictEqual('http:response:error');
         }
     });
 });
