@@ -398,4 +398,49 @@ describe('Test httpClient flow', () => {
             });
         }
     });
+
+    test('GET success with headers', async () => {
+        const logger = pino();
+        logger.info = jest.fn();
+
+        const flow = httpClient<{}, { value: number }>({}, logger);
+        const axiosMock = new MockAdapter(flow.instance);
+
+        axiosMock.onGet('/api/test/1').reply(200, { value: 1 });
+
+        const { response } = await flow({ axiosConfig: { url: '/api/test/1', method: 'GET', headers: {
+            Authorization: 'Basic test',
+        } } });
+
+        expect(response.status).toStrictEqual(200);
+        expect(response.data).toStrictEqual({ value: 1 });
+
+        const infoLogMock = logger.info as jest.Mock;
+        expect(infoLogMock.mock.calls.length).toStrictEqual(2);
+
+        expect(infoLogMock.mock.calls[0].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[0][1]).toStrictEqual('axios http request fulfilled');
+        expect(infoLogMock.mock.calls[0][0]).toStrictEqual({
+            event: 'http:request',
+            method: 'get',
+            url: '/api/test/1',
+            headers: '{"common":{"Accept":"application/json, text/plain, */*"},' +
+                '"delete":{},' +
+                '"get":{},' +
+                '"head":{},' +
+                '"post":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"put":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"patch":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"Authorization":"Basic test"}',
+        });
+
+        expect(infoLogMock.mock.calls[1].length).toStrictEqual(2);
+        expect(infoLogMock.mock.calls[1][1]).toStrictEqual('axios http response fulfilled');
+        expect(infoLogMock.mock.calls[1][0]).toStrictEqual({
+            event: 'http:response',
+            body: '{"value":1}',
+            headers: undefined,
+            http_code: 200,
+        });
+    });
 });
