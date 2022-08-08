@@ -34,9 +34,13 @@ describe('Test httpClient flow', () => {
 
         axiosMock.onPost('/api/test', { value: 2 }).reply(201, { value: 2 });
 
-        const { response } = await flow({ axiosConfig: { url: '/api/test', method: 'POST', data: {
-            value: 2,
-        } } });
+        const { response } = await flow({
+            axiosConfig: {
+                url: '/api/test', method: 'POST', data: {
+                    value: 2,
+                },
+            },
+        });
 
         expect(response.status).toStrictEqual(201);
         expect(response.data).toStrictEqual({ value: 2 });
@@ -48,9 +52,13 @@ describe('Test httpClient flow', () => {
 
         axiosMock.onPut('/api/test', { value: 3 }).reply(200, { value: 3 });
 
-        const { response } = await flow({ axiosConfig: { url: '/api/test', method: 'PUT', data: {
-            value: 3,
-        } } });
+        const { response } = await flow({
+            axiosConfig: {
+                url: '/api/test', method: 'PUT', data: {
+                    value: 3,
+                },
+            },
+        });
 
         expect(response.status).toStrictEqual(200);
         expect(response.data).toStrictEqual({ value: 3 });
@@ -62,9 +70,13 @@ describe('Test httpClient flow', () => {
 
         axiosMock.onPatch('/api/test', { value: 4 }).reply(200, { value: 4 });
 
-        const { response } = await flow({ axiosConfig: { url: '/api/test', method: 'PATCH', data: {
-            value: 4,
-        } } });
+        const { response } = await flow({
+            axiosConfig: {
+                url: '/api/test', method: 'PATCH', data: {
+                    value: 4,
+                },
+            },
+        });
 
         expect(response.status).toStrictEqual(200);
         expect(response.data).toStrictEqual({ value: 4 });
@@ -105,6 +117,13 @@ describe('Test httpClient flow', () => {
             event: 'http:request',
             method: 'get',
             url: '/api/test/1',
+            headers: '{"common":{"Accept":"application/json, text/plain, */*"},' +
+                '"delete":{},' +
+                '"get":{},' +
+                '"head":{},' +
+                '"post":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"put":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"patch":{"Content-Type":"application/x-www-form-urlencoded"}}',
         });
 
         expect(infoLogMock.mock.calls[1].length).toStrictEqual(2);
@@ -139,6 +158,13 @@ describe('Test httpClient flow', () => {
             event: 'http:request',
             method: 'get',
             url: '/api/test/1',
+            headers: '{"common":{"Accept":"application/json, text/plain, */*"},' +
+                '"delete":{},' +
+                '"get":{},' +
+                '"head":{},' +
+                '"post":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"put":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"patch":{"Content-Type":"application/x-www-form-urlencoded"}}',
         });
 
         const errorLogMock = logger.error as jest.Mock;
@@ -252,6 +278,13 @@ describe('Test httpClient flow', () => {
             method: 'post',
             url: '/api/test',
             body: '{"value":2}',
+            headers: '{"common":{"Accept":"application/json, text/plain, */*"},' +
+                '"delete":{},' +
+                '"get":{},' +
+                '"head":{},' +
+                '"post":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"put":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                '"patch":{"Content-Type":"application/x-www-form-urlencoded"}}',
         });
 
         expect(infoLogMock.mock.calls[1].length).toStrictEqual(2);
@@ -288,6 +321,13 @@ describe('Test httpClient flow', () => {
                 event: 'http:request',
                 method: 'get',
                 url: '/api/not-found',
+                headers: '{"common":{"Accept":"application/json, text/plain, */*"},' +
+                    '"delete":{},' +
+                    '"get":{},' +
+                    '"head":{},' +
+                    '"post":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                    '"put":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                    '"patch":{"Content-Type":"application/x-www-form-urlencoded"}}',
             });
 
             const errorLogMock = logger.error as jest.Mock;
@@ -337,6 +377,13 @@ describe('Test httpClient flow', () => {
                 event: 'http:request',
                 method: 'get',
                 url: '/api/not-found',
+                headers: '{"common":{"Accept":"application/json, text/plain, */*"},' +
+                    '"delete":{},' +
+                    '"get":{},' +
+                    '"head":{},' +
+                    '"post":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                    '"put":{"Content-Type":"application/x-www-form-urlencoded"},' +
+                    '"patch":{"Content-Type":"application/x-www-form-urlencoded"}}',
             });
 
             expect(errorLogMock2.mock.calls.length).toStrictEqual(1);

@@ -18,6 +18,7 @@ interface LogContext {
     url: string,
     method: string,
     body?: string,
+    headers?: string
 }
 
 export default (requestConfig: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
@@ -33,6 +34,10 @@ export default (requestConfig: InternalAxiosRequestConfig): InternalAxiosRequest
 
     if (typeof requestConfig.data !== 'undefined') {
         context.body = JSON.stringify(requestConfig.data);
+    }
+
+    if (typeof requestConfig.headers !== 'undefined') {
+        context.headers = JSON.stringify(requestConfig.headers);
     }
 
     requestConfig.logger.info(context, 'axios http request fulfilled');
